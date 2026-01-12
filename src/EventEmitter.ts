@@ -1,5 +1,6 @@
 /**
- * EventEmitter - シンプルなイベントエミッター
+ * EventEmitter - simple event emitter 
+ * used to display loading status or error messages etc.
  */
 
 export class EventEmitter {

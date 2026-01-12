@@ -188,13 +188,10 @@ export class AvatarSpeaker {
   private async sayWithoutAudio(text: string): Promise<void> {
     const duration = this.estimateSpeechDuration(text)
     
-    // シンプルな口パクを開始
     this.lipSync.start()
     
-    // 発話時間分待機
     await new Promise(resolve => setTimeout(resolve, duration))
     
-    // 口パクを停止
     this.lipSync.stop()
     this.subtitleRenderer.hide()
   }
@@ -207,7 +204,7 @@ export class AvatarSpeaker {
 
   /**
    * set expression
-   * @param duration 表情を維持する時間（ミリ秒）。デフォルトは1000ms（1秒）
+   * @param duration expression duration (milliseconds). default is 1000ms (1 second)
    */
   smile(duration: number = 1000): void {
     if (!this.isReady) {
@@ -215,16 +212,14 @@ export class AvatarSpeaker {
       return
     }
     
-    // 既存のタイマーをクリア
     if (this.expressionTimer) {
       clearTimeout(this.expressionTimer)
       this.expressionTimer = null
     }
     
-    // 表情を設定
     this.expressionManager.setJoy(1)
     
-    // 一定時間後に自動リセット
+    // reset the expression after a certain time
     this.expressionTimer = setTimeout(() => {
       this.expressionManager.setNeutral()
       this.expressionTimer = null
@@ -271,7 +266,7 @@ export class AvatarSpeaker {
    * clean up
    */
   destroy(): void {
-    // 表情タイマーをクリーンアップ
+    // clean up the expression timer
     if (this.expressionTimer !== null) {
       clearTimeout(this.expressionTimer)
       this.expressionTimer = null

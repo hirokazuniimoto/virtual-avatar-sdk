@@ -1,5 +1,5 @@
 /**
- * VRMRenderer - VRMモデルのロードとレンダリング
+ * VRMRenderer - VRM model loading and rendering
  */
 
 import * as THREE from 'three'

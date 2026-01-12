@@ -1,5 +1,5 @@
 /**
- * BlinkController - 常時瞬き制御
+ * BlinkController - constant blinking control
  */
 
 import { VRMExpressionPresetName } from '@pixiv/three-vrm'
@@ -9,7 +9,7 @@ export class BlinkController {
   private renderer: VRMRenderer
   private isActive: boolean = false
   private lastBlinkTime: number = 0
-  private blinkInterval: number = 3000 // 3秒間隔
+  private blinkInterval: number = 3000 // 3 seconds interval
   private animationId: number | null = null
   private time: number = 0
 
@@ -42,23 +42,23 @@ export class BlinkController {
       return
     }
 
-    // 現在の表情の重みをチェック（表情が設定されている時は無効）
+    // check the weight of the current expression (if the expression is set, it is disabled)
     const currentHappyWeight = vrm.expressionManager.getValue(VRMExpressionPresetName.Happy) || 0
     const currentAngryWeight = vrm.expressionManager.getValue(VRMExpressionPresetName.Angry) || 0
     const currentSadWeight = vrm.expressionManager.getValue(VRMExpressionPresetName.Sad) || 0
 
-    // 表情が設定されていない時のみまばたき
+    // blink if the expression is not set
     if (currentHappyWeight === 0 && currentAngryWeight === 0 && currentSadWeight === 0) {
       const currentTime = this.time * 1000
       if (currentTime - this.lastBlinkTime > this.blinkInterval) {
         this.blink()
         this.lastBlinkTime = currentTime
-        // 次のまばたきまでの間隔をランダムに設定（2-5秒）
+        // set the interval for the next blink (2-5 seconds)
         this.blinkInterval = 2000 + Math.random() * 3000
       }
     }
 
-    this.time += 0.016 // 約60fps
+    this.time += 0.016 // approximately 60fps
     this.animationId = requestAnimationFrame(this.update)
   }
 
@@ -66,7 +66,7 @@ export class BlinkController {
     const vrm = this.renderer.getVRM()
     if (!vrm?.expressionManager) return
 
-    const blinkDuration = 150 // 0.15秒
+    const blinkDuration = 150 // 0.15 seconds
     const blinkWeight = 1.0
 
     vrm.expressionManager.setValue(VRMExpressionPresetName.Blink, blinkWeight)

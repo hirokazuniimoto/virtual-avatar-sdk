@@ -1,13 +1,13 @@
 /**
- * AvatarSpeaker の型定義
+ * AvatarSpeaker types definitions
  */
 
 export interface AvatarSpeakerOptions {
-  /** VRMファイルパス or URL */
+  /** VRM file path or URL */
   avatar: string
-  /** キャンバス要素またはコンテナ要素（未指定の場合は自動生成） */
+  /** canvas element or container element (auto generated if not specified) */
   canvas?: HTMLCanvasElement | HTMLElement
-  /** 字幕を表示する要素（未指定の場合は自動生成） */
+  /** subtitle container element (auto generated if not specified) */
   subtitleContainer?: HTMLElement
 }
 

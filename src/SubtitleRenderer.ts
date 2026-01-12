@@ -1,5 +1,5 @@
 /**
- * SubtitleRenderer - 字幕表示
+ * SubtitleRenderer - subtitle display
  */
 
 export class SubtitleRenderer {
@@ -11,7 +11,6 @@ export class SubtitleRenderer {
     if (container) {
       this.container = container
     } else {
-      // 自動生成
       this.container = document.createElement('div')
       this.container.style.position = 'fixed'
       this.container.style.bottom = '20px'
@@ -24,13 +23,11 @@ export class SubtitleRenderer {
   }
 
   show(text: string): void {
-    // 既存のタイマーをクリア
     if (this.autoHideTimer) {
       clearTimeout(this.autoHideTimer)
       this.autoHideTimer = null
     }
 
-    // 字幕要素の作成または更新
     if (!this.subtitleElement) {
       this.subtitleElement = document.createElement('div')
       this.subtitleElement.style.background = 'rgba(0, 0, 0, 0.7)'
@@ -54,7 +51,6 @@ export class SubtitleRenderer {
       this.autoHideTimer = null
     }
 
-    // 自動非表示（発話終了後5秒）
     this.autoHideTimer = window.setTimeout(() => {
       if (this.subtitleElement) {
         this.subtitleElement.style.display = 'none'
@@ -70,7 +66,6 @@ export class SubtitleRenderer {
     if (this.subtitleElement) {
       this.subtitleElement.remove()
     }
-    // 自動生成したコンテナのみ削除
     if (this.container.parentElement && this.container === document.body.lastElementChild) {
       this.container.remove()
     }

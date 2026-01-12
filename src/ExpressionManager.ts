@@ -1,5 +1,5 @@
 /**
- * ExpressionManager - 表情制御
+ * ExpressionManager - expression control
  */
 
 import { VRMExpressionPresetName } from '@pixiv/three-vrm'
@@ -14,7 +14,6 @@ export class ExpressionManager {
   }
 
   initialize(): void {
-    // 表情をニュートラルにリセット
     this.setNeutral()
   }
 
@@ -46,7 +45,6 @@ export class ExpressionManager {
   setNeutral(): void {
     const vrm = this.renderer.getVRM()
     if (vrm?.expressionManager) {
-      // すべての表情をリセット
       const expressionManager = vrm.expressionManager
       const presets = [
         VRMExpressionPresetName.Happy,
@@ -62,10 +60,10 @@ export class ExpressionManager {
   setExpressionType(type: ExpressionType): void {
     switch (type) {
       case 'joy':
-        this.setJoy(0.7)
+        this.setJoy(1)
         break
       case 'fun':
-        this.setFun(0.5)
+        this.setFun(1)
         break
       case 'neutral':
       default:
