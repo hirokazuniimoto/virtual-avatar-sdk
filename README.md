@@ -1,213 +1,292 @@
-# AvatarSpeaker
+# Virtual AI Avatar SDK
 
-Web向け・軽量アバターランタイム
+[English](#english) | [日本語](#日本語)
 
-アバターに詳しくないWeb開発者でも「喋るアバター体験」を最短で実装できることを目的としたライブラリです。
+---
 
-## 特徴
+<a name="english"></a>
+## English
 
-- **three.js / three-vrm の知識不要** - 高レベルなAPIのみ提供
-- **シンプルなAPI** - 10個以下のメソッドで完結
-- **自動機能** - 常時瞬き、idleアニメーション、T字ポーズ防止が自動
-- **失敗しても壊れない** - エラーは警告のみ、例外を投げない設計
+### What is Virtual AI Avatar SDK?
 
-## インストール
+Virtual AI Avatar SDK is a lightweight, web-based runtime library for creating interactive 3D avatar experiences. It provides a simple, high-level API that allows developers to easily implement speaking avatars with facial expressions, animations, and lip-sync capabilities without deep knowledge of 3D graphics or VRM format.
+
+### Features
+
+- **Easy to Use** - Simple API with minimal setup required
+- **Expression Control** - Control avatar facial expressions (happy, angry, sad, fun)
+- **Animation Playback** - Play custom VRM animations (.vrma files)
+- **Text-to-Speech** - Display subtitles and lip-sync from text input
+- **Audio Support** - Synchronize lip-sync with audio playback
+- **Auto Features** - Automatic blinking and idle animations
+
+### Installation
 
 ```bash
 npm install avatar-speaker
 ```
 
-## 開発サーバーの起動
-
-ESモジュールを使用するため、`file://` プロトコルでは動作しません。ローカル開発サーバーを起動してください：
-
-```bash
-npm run serve
-```
-
-ブラウザで `http://localhost:3000/examples/basic.html` にアクセスしてください。
-
-その他の方法：
-- Python: `python -m http.server 3000`
-- Node.js: `npx serve . -p 3000`
-- VS Code: Live Server 拡張機能を使用
-
-## 基本的な使い方
+### Quick Start
 
 ```typescript
 import { AvatarSpeaker } from "avatar-speaker"
 
-const ai = new AvatarSpeaker({
+const avatar = new AvatarSpeaker({
   avatar: "/avatars/anime.vrm"
 })
 
-await ai.ready()
+await avatar.ready()
 
-ai.say("こんにちは")
+// Make the avatar speak(without audio)
+avatar.say("Hello, world!")
+
+// Set expressions
+avatar.smile()    // Happy expression
+avatar.angry()    // Angry expression
+avatar.sad()      // Sad expression
+avatar.fun()      // Fun expression
+
+// Play animations
+await avatar.animate("/animations/wave.vrma")
 ```
 
-これだけで：
-- VRMロード
-- idleアニメーション適用
-- 常時瞬き開始
-- 字幕表示
-- 口パク開始／終了
+### Supported File Formats
 
-がすべて自動で行われる。
+- **VRM** (`.vrm`) - 3D avatar models
+- **VRM Animation** (`.vrma`) - Animation files (recommended)
 
-## API
+### API Reference
 
-### 初期化
+#### Initialization
 
 ```typescript
-const ai = new AvatarSpeaker({
-  avatar: string   // VRMファイルパス or URL
+const avatar = new AvatarSpeaker({
+  avatar: string,              // VRM file path or URL
+  canvas?: HTMLCanvasElement,  // Optional canvas element
+  subtitleContainer?: HTMLElement  // Optional subtitle container
 })
 ```
 
-### ロード完了通知
+#### Wait for Ready
 
-**Promise方式（推奨）**
 ```typescript
-await ai.ready()
+await avatar.ready()
 ```
 
-**イベント方式**
+#### Speech
+
 ```typescript
-ai.on("ready", () => {
-  hideLoading()
+// Text only (with auto lip-sync)
+avatar.say("Hello, world!")
+
+// With audio
+avatar.say("Hello, world!", { 
+  audio: audioElement | audioBuffer | audioUrl 
 })
 ```
 
-`ready` は以下がすべて完了した時点で発火：
-- VRMロード完了
-- idleアニメーション適用
-- 瞬き開始
-- 初期レンダリング安定
+#### Expressions
 
-### 発話（口パク + 字幕）
-
-**テキストのみ**
-```typescript
-ai.say("こんにちは")
-```
-音声なしでも「喋っている風」を再現。テキストから母音比率を推定し簡易口形制御。
-
-**音声あり**
-```typescript
-ai.say("こんにちは", { audio })
-```
-`audio`: `AudioBuffer` / `HTMLAudioElement` / 音声ファイルURL
-
-音声再生に同期して口パク。
-
-### 表情・ジェスチャー（プリセット）
+All expression methods accept an optional `duration` parameter (default: 1000ms). The expression will automatically reset to neutral after the specified duration.
 
 ```typescript
-ai.smile()
-ai.bow()
+avatar.smile(duration?: number)   // Happy expression
+avatar.angry(duration?: number)  // Angry expression
+avatar.sad(duration?: number)   // Sad expression
+avatar.fun(duration?: number)    // Fun expression
+avatar.neutral()                  // Reset to neutral immediately
 ```
 
-対応Expression / Animationがある場合のみ再生。存在しない場合は `console.warn` のみで例外は投げない。
-
-### アニメーション（カスタム）
+#### Animations
 
 ```typescript
-ai.animate("/motions/wave.vrma")
+await avatar.animate(path: string)  // Play animation from file path
+await avatar.idle()                 // Play idle animation (preset)
+await avatar.bow()                  // Play bow animation (preset)
 ```
 
-指定したファイルをロード＋即再生。初回のみ内部ロード、以降はキャッシュ。
-
-対応形式：
-- `.vrma`（推奨）
-- `.glb`（experimental）
-
-### アバター切り替え
+#### Avatar Management
 
 ```typescript
-ai.setAvatar("/avatars/robot.vrm")
+await avatar.setAvatar(path: string)  // Switch avatar
+avatar.destroy()                       // Cleanup resources
 ```
 
-### クリーンアップ
+### Default Assets
 
-```typescript
-ai.destroy()
-```
+This package includes default assets from official VRoid sources:
 
-## デフォルト挙動
+#### Default Avatars (3 types)
 
-### 常時瞬き（Blink）
+Official sample models from [VRoid Studio](https://hub.vroid.com/):
 
-アバターは常に自動で瞬き。発話・アニメーションの有無に依存しない。ランダム間隔で自然な瞬き。対応Expressionが無い場合は自動無効化。
+- `assets/avatars/AvatarSample_A.vrm` - Sample character A
+- `assets/avatars/AvatarSample_B.vrm` - Sample character B
+- `assets/avatars/AvatarSample_C.vrm` - Sample character C
 
-### T字防止（デフォルトidle）
+#### Default Animations
 
-VRMロード完了時に必ず idle アニメーションを再生。T字ポーズを防止。idleが無い場合は warn のみ。
+**Preset Animations:**
+- `assets/animations/standard_idle.vrma` - Idle animation (automatically played on initialization)
+- `assets/animations/quick_formal_bow.vrma` - Bow animation
 
-## 初期化フロー
+**VRM Animation Pack (7 types):**
 
-```
-new AvatarSpeaker()
-↓
-VRMロード
-↓
-表情初期化
-↓
-瞬き開始
-↓
-idleアニメーション適用
-↓
-レンダリング安定
-↓
-ready イベント発火
-```
+Official VRM animations from [VRoid Hub](https://booth.pm/ja/items/5512385):
 
-## デフォルトアセット
+- `assets/animations/VRMA_01(全身を見せる).vrma` - Full body showcase
+- `assets/animations/VRMA_02(挨拶).vrma` - Greeting
+- `assets/animations/VRMA_03(Vサイン).vrma` - V-sign
+- `assets/animations/VRMA_04(撃つ).vrma` - Shooting pose
+- `assets/animations/VRMA_05(回る).vrma` - Spinning
+- `assets/animations/VRMA_06(モデルポーズ).vrma` - Model pose
+- `assets/animations/VRMA_07(屈伸運動).vrma` - Squat exercise
 
-本パッケージには以下のデフォルトアセットが同梱されています：
-
-**デフォルトアバター（3体）**
-- `assets/avatars/anime.vrm`（アニメ調）
-- `assets/avatars/human.vrm`（リアル寄り）
-- `assets/avatars/robot.vrm`（非人型）
-
-**デフォルトアニメーション**
-- `assets/animations/idle.vrma` - 待機アニメーション
-- `assets/animations/bow.vrma` - お辞儀
-- `assets/animations/wave.vrma` - 手を振る
-
-使用例：
-```typescript
-// デフォルトアバターを使用
-const ai = new AvatarSpeaker({
-  avatar: "node_modules/avatar-speaker/assets/avatars/anime.vrm"
-})
-
-// デフォルトアニメーションを使用
-await ai.animate("node_modules/avatar-speaker/assets/animations/bow.vrma")
-```
-
-> **注意**: 実際の使用時は、アセットをプロジェクトの`public`フォルダなどにコピーして使用することを推奨します。
-
-## three-vrmとの差別化
-
-| three-vrm | AvatarSpeaker |
-|-----------|--------------|
-| VRMをどう操作するか | アバターに何をさせるか |
-| 低レベルAPI | 高レベル命令型API |
-| 実装負担が高い | 即動く |
-| 初期姿勢は自前 | idle & blink自動 |
-
-## 設計思想
-
-- APIは 10個以下
-- 命令型（imperative）
-- 失敗しても壊れない
-- 精度より「それっぽさ」
-- three-vrmの存在を意識させない
-- 初心者が 3分で成功体験
-
-## ライセンス
+### License
 
 MIT
 
+---
+
+<a name="日本語"></a>
+## 日本語
+
+### Virtual AI Avatar SDKとは？
+
+Virtual AI Avatar SDKは、インタラクティブな3Dアバター体験を作成するための軽量なWeb向けランタイムライブラリです。3DグラフィックスやVRM形式の深い知識がなくても、表情、アニメーション、リップシンク機能を備えた話すアバターを簡単に実装できるシンプルな高レベルAPIを提供します。
+
+### 機能
+
+- **簡単に使える** - 最小限のセットアップで使用可能なシンプルなAPI
+- **表情制御** - アバターの表情を制御（笑顔、怒り、悲しみ、楽しい）
+- **アニメーション再生** - カスタムVRMアニメーション（.vrmaファイル）を再生
+- **テキスト読み上げ** - テキスト入力から字幕とリップシンクを表示
+- **音声対応** - 音声再生と同期したリップシンク
+- **自動機能** - 自動瞬きとidleアニメーション
+
+### インストール
+
+```bash
+npm install avatar-speaker
+```
+
+### クイックスタート
+
+```typescript
+import { AvatarSpeaker } from "avatar-speaker"
+
+const avatar = new AvatarSpeaker({
+  avatar: "/avatars/anime.vrm"
+})
+
+await avatar.ready()
+
+// アバターを話させる（音声無し）
+avatar.say("こんにちは、世界！")
+
+// 表情を設定
+avatar.smile()    // 笑顔
+avatar.angry()    // 怒り
+avatar.sad()      // 悲しみ
+avatar.fun()      // 楽しい
+
+// アニメーションを再生
+await avatar.animate("/animations/wave.vrma")
+```
+
+### 対応ファイル形式
+
+- **VRM** (`.vrm`) - 3Dアバターモデル
+- **VRMアニメーション** (`.vrma`) - アニメーションファイル（推奨）
+
+### APIリファレンス
+
+#### 初期化
+
+```typescript
+const avatar = new AvatarSpeaker({
+  avatar: string,              // VRMファイルパスまたはURL
+  canvas?: HTMLCanvasElement,  // オプション：キャンバス要素
+  subtitleContainer?: HTMLElement  // オプション：字幕コンテナ
+})
+```
+
+#### ロード完了を待つ
+
+```typescript
+await avatar.ready()
+```
+
+#### 発話
+
+```typescript
+// テキストのみ（自動リップシンク付き）
+avatar.say("こんにちは、世界！")
+
+// 音声付き
+avatar.say("こんにちは、世界！", { 
+  audio: audioElement | audioBuffer | audioUrl 
+})
+```
+
+#### 表情
+
+すべての表情メソッドはオプションの`duration`パラメータ（デフォルト：1000ms）を受け取ります。指定時間後に自動的にニュートラルな表情に戻ります。
+
+```typescript
+avatar.smile(duration?: number)   // 笑顔
+avatar.angry(duration?: number)   // 怒り
+avatar.sad(duration?: number)     // 悲しみ
+avatar.fun(duration?: number)     // 楽しい
+avatar.neutral()                   // 即座にニュートラルに戻す
+```
+
+#### アニメーション
+
+```typescript
+await avatar.animate(path: string)  // ファイルパスからアニメーションを再生
+await avatar.idle()                 // 待機アニメーションを再生（プリセット）
+await avatar.bow()                  // お辞儀アニメーションを再生（プリセット）
+```
+
+#### アバター管理
+
+```typescript
+await avatar.setAvatar(path: string)  // アバターを切り替え
+avatar.destroy()                       // リソースをクリーンアップ
+```
+
+### デフォルトアセット
+
+このパッケージには、公式VRoidソースからのデフォルトアセットが含まれています：
+
+#### デフォルトアバター（3種類）
+
+[VRoid Studio](https://hub.vroid.com/)の公式サンプルモデル：
+
+- `assets/avatars/AvatarSample_A.vrm` - サンプルキャラクターA
+- `assets/avatars/AvatarSample_B.vrm` - サンプルキャラクターB
+- `assets/avatars/AvatarSample_C.vrm` - サンプルキャラクターC
+
+#### デフォルトアニメーション
+
+**プリセットアニメーション:**
+- `assets/animations/standard_idle.vrma` - 待機アニメーション（初期化時に自動再生）
+- `assets/animations/quick_formal_bow.vrma` - お辞儀アニメーション
+
+**VRMアニメーションパック（7種類）:**
+
+[VRoid Hub](https://booth.pm/ja/items/5512385)の公式VRMアニメーション：
+
+- `assets/animations/VRMA_01(全身を見せる).vrma` - 全身を見せる
+- `assets/animations/VRMA_02(挨拶).vrma` - 挨拶
+- `assets/animations/VRMA_03(Vサイン).vrma` - Vサイン
+- `assets/animations/VRMA_04(撃つ).vrma` - 撃つポーズ
+- `assets/animations/VRMA_05(回る).vrma` - 回転
+- `assets/animations/VRMA_06(モデルポーズ).vrma` - モデルポーズ
+- `assets/animations/VRMA_07(屈伸運動).vrma` - 屈伸運動
+
+
+### ライセンス
+
+MIT

@@ -203,10 +203,13 @@ export class AvatarSpeaker {
   }
 
   /**
-   * set expression
+   * Set expression with auto-reset
    * @param duration expression duration (milliseconds). default is 1000ms (1 second)
    */
-  smile(duration: number = 1000): void {
+  private setExpressionWithTimer(
+    expressionFn: () => void,
+    duration: number = 1000
+  ): void {
     if (!this.isReady) {
       console.warn('AvatarSpeaker is not ready yet')
       return
@@ -217,13 +220,75 @@ export class AvatarSpeaker {
       this.expressionTimer = null
     }
     
-    this.expressionManager.setJoy(1)
+    expressionFn()
     
     // reset the expression after a certain time
     this.expressionTimer = setTimeout(() => {
       this.expressionManager.setNeutral()
       this.expressionTimer = null
     }, duration)
+  }
+
+  /**
+   * Set happy expression (smile)
+   * @param duration expression duration (milliseconds). default is 1000ms (1 second)
+   */
+  smile(duration: number = 1000): void {
+    this.setExpressionWithTimer(() => {
+      this.expressionManager.setJoy(1)
+    }, duration)
+  }
+
+  /**
+   * Set angry expression
+   * @param duration expression duration (milliseconds). default is 1000ms (1 second)
+   */
+  angry(duration: number = 1000): void {
+    this.setExpressionWithTimer(() => {
+      this.expressionManager.setAngry(1)
+    }, duration)
+  }
+
+  /**
+   * Set sad expression
+   * @param duration expression duration (milliseconds). default is 1000ms (1 second)
+   */
+  sad(duration: number = 1000): void {
+    this.setExpressionWithTimer(() => {
+      this.expressionManager.setSorrow(1)
+    }, duration)
+  }
+
+  /**
+   * Set fun expression
+   * @param duration expression duration (milliseconds). default is 1000ms (1 second)
+   */
+  fun(duration: number = 1000): void {
+    this.setExpressionWithTimer(() => {
+      this.expressionManager.setFun(1)
+    }, duration)
+  }
+
+  /**
+   * Reset expression to neutral
+   */
+  neutral(): void {
+    if (this.expressionTimer) {
+      clearTimeout(this.expressionTimer)
+      this.expressionTimer = null
+    }
+    this.expressionManager.setNeutral()
+  }
+
+  /**
+   * play idle animation
+   */
+  async idle(): Promise<void> {
+    if (!this.isReady) {
+      console.warn('AvatarSpeaker is not ready yet')
+      return
+    }
+    await this.animationManager.ensureIdle()
   }
 
   /**
