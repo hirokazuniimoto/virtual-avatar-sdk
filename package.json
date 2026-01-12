@@ -1,0 +1,46 @@
+{
+  "name": "avatar-speaker",
+  "version": "0.1.0",
+  "description": "Web向け・軽量アバターランタイム - アバターに詳しくないWeb開発者でも「喋るアバター体験」を最短で実装",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "assets",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc && rollup -c",
+    "dev": "tsc --watch",
+    "serve": "npx serve . -p 3000",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "avatar",
+    "vrm",
+    "three.js",
+    "lip-sync",
+    "animation",
+    "web"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.160.0",
+    "@pixiv/three-vrm": "^3.4.4",
+    "@pixiv/three-vrm-animation": "^3.4.4"
+  },
+  "devDependencies": {
+    "@types/three": "^0.160.0",
+    "typescript": "^5.0.0",
+    "rollup": "^4.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-commonjs": "^25.0.0"
+  },
+  "peerDependencies": {
+    "three": "^0.160.0"
+  }
+}
+
