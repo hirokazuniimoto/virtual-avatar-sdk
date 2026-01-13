@@ -213,32 +213,32 @@ await avatar.bow()                  // Play bow animation (preset)
 
 #### Loading Assets from npm Package
 
-When installed via npm, assets are located in `node_modules/virtual-avatar/assets/`. To resolve asset paths, use the `getAssetPath`, `getAnimationPath`, and `getAvatarPath` helper functions.
+After installing the package, copy assets to your `public` folder:
 
-**Usage:**
+```bash
+# Copy assets from node_modules to your public folder
+cp -r node_modules/virtual-avatar/assets public/assets
+# On Windows (PowerShell):
+Copy-Item -Recurse node_modules/virtual-avatar/assets public/assets
+```
+
+Then use the helper functions or direct paths:
 
 ```typescript
 import { AvatarSpeaker, getAnimationPath, getAvatarPath } from "virtual-avatar"
 
-// Resolve avatar path
 const avatar = new AvatarSpeaker({
-  avatar: getAvatarPath("AvatarSample_A.vrm")
+  avatar: getAvatarPath("AvatarSample_A.vrm")  // Returns "/assets/avatars/AvatarSample_A.vrm"
 })
 
 await avatar.ready()
-
-// Resolve animation paths
-await avatar.animate(getAnimationPath("VRMA_01(全身を見せる).vrma"))
-await avatar.animate(getAnimationPath("VRMA_02(挨拶).vrma"))
+await avatar.animate(getAnimationPath("VRMA_02(挨拶).vrma"))  // Returns "/assets/animations/VRMA_02(挨拶).vrma"
 ```
 
-**Available Helper Functions:**
-
-- `getAssetPath(assetPath: string)` - Resolve path relative to assets folder
-- `getAnimationPath(animationName: string)` - Resolve animation file path
-- `getAvatarPath(avatarName: string)` - Resolve avatar file path
-
-**Note:** For production, it's recommended to copy assets to your project's `public` folder or handle them with a bundler. When using dev servers (Vite, webpack dev server, etc.), assets can be loaded directly from `node_modules`.
+Or use direct paths:
+```typescript
+await avatar.animate("/assets/animations/VRMA_02(挨拶).vrma")
+```
 
 #### Avatar Management
 
@@ -741,32 +741,32 @@ await avatar.setAvatar("/assets/avatars/AvatarSample_B.vrm")
 
 #### npmパッケージからアセットを読み込む
 
-npmパッケージとしてインストールした場合、アセットは `node_modules/virtual-avatar/assets/` に配置されます。アセットへのパスを解決するには、`getAssetPath`、`getAnimationPath`、`getAvatarPath` ヘルパー関数を使用してください。
+パッケージをインストール後、アセットを`public`フォルダにコピーしてください：
 
-**使用方法:**
+```bash
+# node_modulesからアセットをpublicフォルダにコピー
+cp -r node_modules/virtual-avatar/assets public/assets
+# Windows (PowerShell)の場合:
+Copy-Item -Recurse node_modules/virtual-avatar/assets public/assets
+```
+
+その後、ヘルパー関数または直接パスを使用できます：
 
 ```typescript
 import { AvatarSpeaker, getAnimationPath, getAvatarPath } from "virtual-avatar"
 
-// アバターのパスを解決
 const avatar = new AvatarSpeaker({
-  avatar: getAvatarPath("AvatarSample_A.vrm")
+  avatar: getAvatarPath("AvatarSample_A.vrm")  // "/assets/avatars/AvatarSample_A.vrm" を返す
 })
 
 await avatar.ready()
-
-// アニメーションのパスを解決
-await avatar.animate(getAnimationPath("VRMA_01(全身を見せる).vrma"))
-await avatar.animate(getAnimationPath("VRMA_02(挨拶).vrma"))
+await avatar.animate(getAnimationPath("VRMA_02(挨拶).vrma"))  // "/assets/animations/VRMA_02(挨拶).vrma" を返す
 ```
 
-**利用可能なヘルパー関数:**
-
-- `getAssetPath(assetPath: string)` - アセットフォルダからの相対パスを解決
-- `getAnimationPath(animationName: string)` - アニメーションファイルのパスを解決
-- `getAvatarPath(avatarName: string)` - アバターファイルのパスを解決
-
-**注意:** 本番環境では、アセットをプロジェクトの `public` フォルダにコピーするか、バンドラーでアセットを処理することを推奨します。開発サーバー（Vite、webpack dev serverなど）を使用している場合、`node_modules` から直接アセットを読み込むことができます。
+または直接パスを使用：
+```typescript
+await avatar.animate("/assets/animations/VRMA_02(挨拶).vrma")
+```
 
 #### デフォルトアニメーション
 

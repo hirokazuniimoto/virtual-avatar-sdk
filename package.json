@@ -1,6 +1,6 @@
 {
   "name": "virtual-avatar",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "description": "Web向け・軽量アバターランタイム - アバターに詳しくないWeb開発者でも「喋るアバター体験」を最短で実装",
   "type": "module",
   "main": "dist/index.cjs",
