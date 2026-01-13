@@ -1,7 +1,8 @@
 {
-  "name": "avatar-speaker",
+  "name": "virtual-avatar",
   "version": "0.1.0",
   "description": "Web向け・軽量アバターランタイム - アバターに詳しくないWeb開発者でも「喋るアバター体験」を最短で実装",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -27,6 +28,14 @@
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hirokazuniimoto/virtual-avatar-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hirokazuniimoto/virtual-avatar-sdk/issues"
+  },
+  "homepage": "https://github.com/hirokazuniimoto/virtual-avatar-sdk#readme",
   "dependencies": {
     "three": "^0.160.0",
     "@pixiv/three-vrm": "^3.4.4",
@@ -38,9 +47,6 @@
     "rollup": "^4.0.0",
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-commonjs": "^25.0.0"
-  },
-  "peerDependencies": {
-    "three": "^0.160.0"
   }
 }
 

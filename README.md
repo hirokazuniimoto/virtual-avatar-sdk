@@ -20,19 +20,109 @@ Virtual Avatar SDK is a lightweight, web-based runtime library for creating inte
 - **Audio Support** - Synchronize lip-sync with audio playback
 - **Auto Features** - Automatic blinking and idle animations
 
+### Installation
+
+Install via npm:
+
+```bash
+npm install virtual-avatar
+```
+
+This will automatically install all required dependencies including `three`, `@pixiv/three-vrm`, and `@pixiv/three-vrm-animation`.
+
 ### Setup
 
-This SDK is provided as a code package that includes both the runtime library and default assets. To use it:
+**For npm users (recommended):**
+
+```typescript
+import { AvatarSpeaker } from "virtual-avatar"
+
+const avatar = new AvatarSpeaker({
+  avatar: "/assets/avatars/AvatarSample_A.vrm"
+})
+```
+
+**For direct usage (without npm):**
+
+If you're using the SDK directly from the repository:
 
 1. Clone or download this repository
-2. Copy the SDK code and assets to your project
-3. Import and use the `AvatarSpeaker` class from the code
+2. Install dependencies and build the SDK:
+```bash
+npm install
+npm run build
+```
+3. Copy the SDK code (`dist` folder) and assets (`assets` folder) to your project
+4. Set up import maps for dependencies (three.js and related libraries):
+```html
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.4.4/lib/three-vrm.module.js",
+    "@pixiv/three-vrm-animation": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm-animation@3.4.4/lib/three-vrm-animation.module.js"
+  }
+}
+</script>
+```
+5. Import and use the `AvatarSpeaker` class:
+```typescript
+import { AvatarSpeaker } from "./dist/index.esm.js"
+```
 
 The package includes default avatars and animations in the `assets` folder, which you can use immediately in your projects.
 
 ### Quick Start
 
+**HTML Example:**
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.4.4/lib/three-vrm.module.js",
+      "@pixiv/three-vrm-animation": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm-animation@3.4.4/lib/three-vrm-animation.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="avatar-container"></div>
+  
+  <script type="module">
+    import { AvatarSpeaker } from "./dist/index.esm.js"
+
+    const avatar = new AvatarSpeaker({
+      avatar: "/assets/avatars/AvatarSample_A.vrm",
+      canvas: document.querySelector("#avatar-container")
+    })
+
+    await avatar.ready()
+
+    // Make the avatar speak(without audio)
+    avatar.say("Hello, world!")
+
+    // Set expressions
+    avatar.smile()    // Happy expression
+    avatar.angry()    // Angry expression
+    avatar.sad()      // Sad expression
+    avatar.fun()      // Fun expression
+
+    // Play animations
+    await avatar.animate("/assets/animations/VRMA_02(挨拶).vrma")
+  </script>
+</body>
+</html>
+```
+
+**TypeScript/JavaScript Module Example:**
 ```typescript
+// When using with bundlers (webpack, vite, etc.), install dependencies:
+// npm install three @pixiv/three-vrm @pixiv/three-vrm-animation
+
 import { AvatarSpeaker } from "./dist/index.esm.js"
 
 const avatar = new AvatarSpeaker({
@@ -301,19 +391,109 @@ Virtual Avatar SDKは、インタラクティブな3Dアバター体験を作成
 - **音声対応** - 音声再生と同期したリップシンク
 - **自動機能** - 自動瞬きとidleアニメーション
 
+### インストール
+
+npm経由でインストール：
+
+```bash
+npm install virtual-avatar
+```
+
+これにより、`three`、`@pixiv/three-vrm`、`@pixiv/three-vrm-animation`を含むすべての必要な依存関係が自動的にインストールされます。
+
 ### セットアップ
 
-このSDKは、ランタイムライブラリとデフォルトアセットの両方を含むコードセットとして提供されています。使用するには：
+**npmを使用する場合（推奨）:**
+
+```typescript
+import { AvatarSpeaker } from "virtual-avatar"
+
+const avatar = new AvatarSpeaker({
+  avatar: "/assets/avatars/AvatarSample_A.vrm"
+})
+```
+
+**直接使用する場合（npmを使用しない）:**
+
+リポジトリから直接SDKを使用する場合：
 
 1. このリポジトリをクローンまたはダウンロードする
-2. SDKコードとアセットをプロジェクトにコピーする
-3. コードから`AvatarSpeaker`クラスをインポートして使用する
+2. 依存関係をインストールしてSDKをビルドする：
+```bash
+npm install
+npm run build
+```
+3. SDKコード（`dist`フォルダ）とアセット（`assets`フォルダ）をプロジェクトにコピーする
+4. 依存関係（three.jsと関連ライブラリ）のimport mapを設定する：
+```html
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.4.4/lib/three-vrm.module.js",
+    "@pixiv/three-vrm-animation": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm-animation@3.4.4/lib/three-vrm-animation.module.js"
+  }
+}
+</script>
+```
+5. `AvatarSpeaker`クラスをインポートして使用する：
+```typescript
+import { AvatarSpeaker } from "./dist/index.esm.js"
+```
 
 パッケージには`assets`フォルダにデフォルトのアバターとアニメーションが含まれており、プロジェクトで即座に使用できます。
 
 ### クイックスタート
 
+**HTMLの例:**
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.4.4/lib/three-vrm.module.js",
+      "@pixiv/three-vrm-animation": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm-animation@3.4.4/lib/three-vrm-animation.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="avatar-container"></div>
+  
+  <script type="module">
+    import { AvatarSpeaker } from "./dist/index.esm.js"
+
+    const avatar = new AvatarSpeaker({
+      avatar: "/assets/avatars/AvatarSample_A.vrm",
+      canvas: document.querySelector("#avatar-container")
+    })
+
+    await avatar.ready()
+
+    // アバターを話させる（音声無し）
+    avatar.say("こんにちは、世界！")
+
+    // 表情を設定
+    avatar.smile()    // 笑顔
+    avatar.angry()    // 怒り
+    avatar.sad()      // 悲しみ
+    avatar.fun()      // 楽しい
+
+    // アニメーションを再生
+    await avatar.animate("/assets/animations/VRMA_02(挨拶).vrma")
+  </script>
+</body>
+</html>
+```
+
+**TypeScript/JavaScriptモジュールの例:**
 ```typescript
+// バンドラー（webpack、viteなど）を使用する場合、依存関係をインストール:
+// npm install three @pixiv/three-vrm @pixiv/three-vrm-animation
+
 import { AvatarSpeaker } from "./dist/index.esm.js"
 
 const avatar = new AvatarSpeaker({

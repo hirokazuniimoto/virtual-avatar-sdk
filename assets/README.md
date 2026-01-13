@@ -19,7 +19,7 @@
 これらのアセットを使用するには、プロジェクトの`public`フォルダなどにコピーして使用してください。
 
 ```typescript
-import { AvatarSpeaker } from "avatar-speaker"
+import { AvatarSpeaker } from "virtual-avatar"
 
 const ai = new AvatarSpeaker({
   avatar: "/avatars/anime.vrm"  // public/avatars/anime.vrm にコピーした場合
