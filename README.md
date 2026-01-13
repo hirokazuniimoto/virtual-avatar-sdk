@@ -1,4 +1,4 @@
-# Virtual AI Avatar SDK
+# Virtual Avatar SDK (for Virtual AI Avatar)
 
 [English](#english) | [日本語](#日本語)
 
@@ -7,9 +7,9 @@
 <a name="english"></a>
 ## English
 
-### What is Virtual AI Avatar SDK?
+### What is Virtual Avatar SDK?
 
-Virtual AI Avatar SDK is a lightweight, web-based runtime library for creating interactive 3D avatar experiences. It provides a simple, high-level API that allows developers to easily implement speaking avatars with facial expressions, animations, and lip-sync capabilities without deep knowledge of 3D graphics or VRM format.
+Virtual Avatar SDK is a lightweight, web-based runtime library for creating interactive 3D avatar experiences. It provides a simple, high-level API that allows developers to easily implement speaking avatars with facial expressions, animations, and lip-sync capabilities without deep knowledge of 3D graphics or VRM format. It also makes it easy to build AI Avatar.
 
 ### Features
 
@@ -20,19 +20,23 @@ Virtual AI Avatar SDK is a lightweight, web-based runtime library for creating i
 - **Audio Support** - Synchronize lip-sync with audio playback
 - **Auto Features** - Automatic blinking and idle animations
 
-### Installation
+### Setup
 
-```bash
-npm install avatar-speaker
-```
+This SDK is provided as a code package that includes both the runtime library and default assets. To use it:
+
+1. Clone or download this repository
+2. Copy the SDK code and assets to your project
+3. Import and use the `AvatarSpeaker` class from the code
+
+The package includes default avatars and animations in the `assets` folder, which you can use immediately in your projects.
 
 ### Quick Start
 
 ```typescript
-import { AvatarSpeaker } from "avatar-speaker"
+import { AvatarSpeaker } from "./dist/index.esm.js"
 
 const avatar = new AvatarSpeaker({
-  avatar: "/avatars/anime.vrm"
+  avatar: "/assets/avatars/AvatarSample_A.vrm"
 })
 
 await avatar.ready()
@@ -47,7 +51,7 @@ avatar.sad()      // Sad expression
 avatar.fun()      // Fun expression
 
 // Play animations
-await avatar.animate("/animations/wave.vrma")
+await avatar.animate("/assets/animations/VRMA_02(挨拶).vrma")
 ```
 
 ### Supported File Formats
@@ -112,9 +116,103 @@ await avatar.setAvatar(path: string)  // Switch avatar
 avatar.destroy()                       // Cleanup resources
 ```
 
+### Building an AI Avatar with ChatGPT API
+
+Here's a example of building an interactive AI avatar that uses ChatGPT API for conversation and text-to-speech for voice synthesis:
+
+```typescript
+import { AvatarSpeaker } from "./dist/index.esm.js"
+
+// Initialize avatar
+const avatar = new AvatarSpeaker({
+  avatar: "/assets/avatars/AvatarSample_A.vrm",
+  canvas: document.querySelector("#avatar-container"),
+  subtitleContainer: document.querySelector("#subtitle-container")
+})
+
+await avatar.ready()
+
+// ChatGPT API integration
+async function chatWithAvatar(userMessage: string) {
+  try {
+    // 1. Get response from ChatGPT API
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4",
+        messages: [
+          { role: "system", content: "You are a friendly AI assistant." },
+          { role: "user", content: userMessage }
+        ]
+      })
+    })
+
+    const data = await response.json()
+    const aiResponse = data.choices[0].message.content
+
+    // 2. Convert text to speech using OpenAI TTS API
+    const audioResponse = await fetch("https://api.openai.com/v1/audio/speech", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "tts-1",
+        input: aiResponse,
+        voice: "alloy" // Options: alloy, echo, fable, onyx, nova, shimmer
+      })
+    })
+
+    const audioBlob = await audioResponse.blob()
+    const audioUrl = URL.createObjectURL(audioBlob)
+    const audio = new Audio(audioUrl)
+
+    // 3. Make avatar speak with audio and lip-sync
+    await avatar.say(aiResponse, { audio })
+
+    // Cleanup
+    audio.addEventListener("ended", () => {
+      URL.revokeObjectURL(audioUrl)
+    })
+  } catch (error) {
+    console.error("Error:", error)
+    // Fallback: text-only speech
+    avatar.say("Sorry, I encountered an error.")
+  }
+}
+
+// Example usage
+document.querySelector("#chat-button").addEventListener("click", async () => {
+  const input = document.querySelector("#user-input")
+  const message = input.value
+  input.value = ""
+  
+  // Show thinking animation
+  await avatar.animate("/assets/animations/VRMA_06(モデルポーズ).vrma")
+  
+  // Chat with avatar
+  await chatWithAvatar(message)
+})
+
+// Add expressions based on conversation context
+avatar.smile() // Happy response
+await chatWithAvatar("Tell me a joke!")
+```
+
+**Key Points:**
+- Use ChatGPT API to generate conversational responses
+- Use OpenAI TTS API (or other TTS services) to convert text to speech
+- Pass the audio to `avatar.say()` for synchronized lip-sync
+- Combine with expressions and animations for more natural interactions
+
 ### Default Assets
 
-This package includes default assets from official VRoid sources:
+This package includes default assets from official VRoid sources. These assets are ready to use and can be referenced directly from the `assets` folder.
 
 #### Default Avatars (3 types)
 
@@ -123,6 +221,21 @@ Official sample models from [VRoid Studio](https://hub.vroid.com/):
 - `assets/avatars/AvatarSample_A.vrm` - Sample character A
 - `assets/avatars/AvatarSample_B.vrm` - Sample character B
 - `assets/avatars/AvatarSample_C.vrm` - Sample character C
+
+**Usage Example:**
+```typescript
+import { AvatarSpeaker } from "./dist/index.esm.js"
+
+// Use default avatar A
+const avatar = new AvatarSpeaker({
+  avatar: "/assets/avatars/AvatarSample_A.vrm"
+})
+
+await avatar.ready()
+
+// Switch to another default avatar
+await avatar.setAvatar("/assets/avatars/AvatarSample_B.vrm")
+```
 
 #### Default Animations
 
@@ -142,6 +255,30 @@ Official VRM animations from [VRoid Hub](https://booth.pm/ja/items/5512385):
 - `assets/animations/VRMA_06(モデルポーズ).vrma` - Model pose
 - `assets/animations/VRMA_07(屈伸運動).vrma` - Squat exercise
 
+**Usage Examples:**
+```typescript
+import { AvatarSpeaker } from "./dist/index.esm.js"
+
+const avatar = new AvatarSpeaker({
+  avatar: "/assets/avatars/AvatarSample_A.vrm"
+})
+
+await avatar.ready()
+
+// Play preset animations
+await avatar.bow()  // Uses quick_formal_bow.vrma
+await avatar.idle() // Uses standard_idle.vrma
+
+// Play custom animations from the pack
+await avatar.animate("/assets/animations/VRMA_02(挨拶).vrma")  // Greeting
+await avatar.animate("/assets/animations/VRMA_03(Vサイン).vrma") // V-sign
+await avatar.animate("/assets/animations/VRMA_05(回る).vrma")    // Spinning
+
+// Combine with expressions
+avatar.smile()
+await avatar.animate("/assets/animations/VRMA_02(挨拶).vrma")
+```
+
 ### License
 
 MIT
@@ -151,9 +288,9 @@ MIT
 <a name="日本語"></a>
 ## 日本語
 
-### Virtual AI Avatar SDKとは？
+### Virtual Avatar SDKとは？
 
-Virtual AI Avatar SDKは、インタラクティブな3Dアバター体験を作成するための軽量なWeb向けランタイムライブラリです。3DグラフィックスやVRM形式の深い知識がなくても、表情、アニメーション、リップシンク機能を備えた話すアバターを簡単に実装できるシンプルな高レベルAPIを提供します。
+Virtual Avatar SDKは、インタラクティブな3Dアバター体験を作成するための軽量なWeb向けランタイムライブラリです。3DグラフィックスやVRM形式の深い知識がなくても、表情、アニメーション、リップシンク機能を備えた話すアバターを簡単に実装できるシンプルな高レベルAPIを提供します。またAIアバターの構築を簡単に行えます。
 
 ### 機能
 
@@ -164,19 +301,23 @@ Virtual AI Avatar SDKは、インタラクティブな3Dアバター体験を作
 - **音声対応** - 音声再生と同期したリップシンク
 - **自動機能** - 自動瞬きとidleアニメーション
 
-### インストール
+### セットアップ
 
-```bash
-npm install avatar-speaker
-```
+このSDKは、ランタイムライブラリとデフォルトアセットの両方を含むコードセットとして提供されています。使用するには：
+
+1. このリポジトリをクローンまたはダウンロードする
+2. SDKコードとアセットをプロジェクトにコピーする
+3. コードから`AvatarSpeaker`クラスをインポートして使用する
+
+パッケージには`assets`フォルダにデフォルトのアバターとアニメーションが含まれており、プロジェクトで即座に使用できます。
 
 ### クイックスタート
 
 ```typescript
-import { AvatarSpeaker } from "avatar-speaker"
+import { AvatarSpeaker } from "./dist/index.esm.js"
 
 const avatar = new AvatarSpeaker({
-  avatar: "/avatars/anime.vrm"
+  avatar: "/assets/avatars/AvatarSample_A.vrm"
 })
 
 await avatar.ready()
@@ -191,7 +332,7 @@ avatar.sad()      // 悲しみ
 avatar.fun()      // 楽しい
 
 // アニメーションを再生
-await avatar.animate("/animations/wave.vrma")
+await avatar.animate("/assets/animations/VRMA_02(挨拶).vrma")
 ```
 
 ### 対応ファイル形式
@@ -256,9 +397,103 @@ await avatar.setAvatar(path: string)  // アバターを切り替え
 avatar.destroy()                       // リソースをクリーンアップ
 ```
 
+### ChatGPT APIを使ったAIアバターの構築
+
+ChatGPT APIと組み合わせて、会話機能付きのAIアバターを構築する例：
+
+```typescript
+import { AvatarSpeaker } from "./dist/index.esm.js"
+
+// アバターの初期化
+const avatar = new AvatarSpeaker({
+  avatar: "/assets/avatars/AvatarSample_A.vrm",
+  canvas: document.querySelector("#avatar-container"),
+  subtitleContainer: document.querySelector("#subtitle-container")
+})
+
+await avatar.ready()
+
+// ChatGPT APIとの統合
+async function chatWithAvatar(userMessage: string) {
+  try {
+    // 1. ChatGPT APIから応答を取得
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4",
+        messages: [
+          { role: "system", content: "あなたは親しみやすいAIアシスタントです。" },
+          { role: "user", content: userMessage }
+        ]
+      })
+    })
+
+    const data = await response.json()
+    const aiResponse = data.choices[0].message.content
+
+    // 2. OpenAI TTS APIを使用してテキストを音声に変換
+    const audioResponse = await fetch("https://api.openai.com/v1/audio/speech", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "tts-1",
+        input: aiResponse,
+        voice: "alloy" // オプション: alloy, echo, fable, onyx, nova, shimmer
+      })
+    })
+
+    const audioBlob = await audioResponse.blob()
+    const audioUrl = URL.createObjectURL(audioBlob)
+    const audio = new Audio(audioUrl)
+
+    // 3. 音声とリップシンク付きでアバターを話させる
+    await avatar.say(aiResponse, { audio })
+
+    // クリーンアップ
+    audio.addEventListener("ended", () => {
+      URL.revokeObjectURL(audioUrl)
+    })
+  } catch (error) {
+    console.error("エラー:", error)
+    // フォールバック: テキストのみの発話
+    avatar.say("申し訳ございません。エラーが発生しました。")
+  }
+}
+
+// 使用例
+document.querySelector("#chat-button").addEventListener("click", async () => {
+  const input = document.querySelector("#user-input")
+  const message = input.value
+  input.value = ""
+  
+  // 考えているアニメーションを表示
+  await avatar.animate("/assets/animations/VRMA_06(モデルポーズ).vrma")
+  
+  // アバターとチャット
+  await chatWithAvatar(message)
+})
+
+// 会話の文脈に応じて表情を追加
+avatar.smile() // 嬉しい応答
+await chatWithAvatar("ジョークを教えて！")
+```
+
+**ポイント:**
+- ChatGPT APIを使用して会話応答を生成
+- OpenAI TTS API（または他のTTSサービス）を使用してテキストを音声に変換
+- 音声を`avatar.say()`に渡してリップシンクを同期
+- 表情やアニメーションと組み合わせてより自然な対話を実現
+
 ### デフォルトアセット
 
-このパッケージには、公式VRoidソースからのデフォルトアセットが含まれています：
+このパッケージには、公式VRoidソースからのデフォルトアセットが含まれています。これらのアセットはすぐに使用でき、`assets`フォルダから直接参照できます。
 
 #### デフォルトアバター（3種類）
 
@@ -267,6 +502,21 @@ avatar.destroy()                       // リソースをクリーンアップ
 - `assets/avatars/AvatarSample_A.vrm` - サンプルキャラクターA
 - `assets/avatars/AvatarSample_B.vrm` - サンプルキャラクターB
 - `assets/avatars/AvatarSample_C.vrm` - サンプルキャラクターC
+
+**使用例:**
+```typescript
+import { AvatarSpeaker } from "./dist/index.esm.js"
+
+// デフォルトアバターAを使用
+const avatar = new AvatarSpeaker({
+  avatar: "/assets/avatars/AvatarSample_A.vrm"
+})
+
+await avatar.ready()
+
+// 別のデフォルトアバターに切り替え
+await avatar.setAvatar("/assets/avatars/AvatarSample_B.vrm")
+```
 
 #### デフォルトアニメーション
 
@@ -285,6 +535,30 @@ avatar.destroy()                       // リソースをクリーンアップ
 - `assets/animations/VRMA_05(回る).vrma` - 回転
 - `assets/animations/VRMA_06(モデルポーズ).vrma` - モデルポーズ
 - `assets/animations/VRMA_07(屈伸運動).vrma` - 屈伸運動
+
+**使用例:**
+```typescript
+import { AvatarSpeaker } from "./dist/index.esm.js"
+
+const avatar = new AvatarSpeaker({
+  avatar: "/assets/avatars/AvatarSample_A.vrm"
+})
+
+await avatar.ready()
+
+// プリセットアニメーションを再生
+await avatar.bow()  // quick_formal_bow.vrmaを使用
+await avatar.idle() // standard_idle.vrmaを使用
+
+// パックからカスタムアニメーションを再生
+await avatar.animate("/assets/animations/VRMA_02(挨拶).vrma")  // 挨拶
+await avatar.animate("/assets/animations/VRMA_03(Vサイン).vrma") // Vサイン
+await avatar.animate("/assets/animations/VRMA_05(回る).vrma")    // 回転
+
+// 表情と組み合わせる
+avatar.smile()
+await avatar.animate("/assets/animations/VRMA_02(挨拶).vrma")
+```
 
 
 ### ライセンス

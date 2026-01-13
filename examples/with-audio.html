@@ -53,7 +53,7 @@
     import { AvatarSpeaker } from '../dist/index.esm.js'
 
     const ai = new AvatarSpeaker({
-      avatar: '/avatars/anime.vrm',
+      avatar: '/assets/avatars/AvatarSample_A.vrm',
       canvas: document.querySelector('#avatar-container')
     })
 
@@ -67,7 +67,7 @@
         const audioUrl = URL.createObjectURL(file)
         const audio = new Audio(audioUrl)
         
-        await ai.say('音声ありで発話します', { audio })
+        await ai.say('音声ありで発話します（音声ファイルに合わせた発話内容を入れる）', { audio })
         
         URL.revokeObjectURL(audioUrl)
       } else {
