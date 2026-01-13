@@ -1,11 +1,18 @@
 {
   "name": "virtual-avatar",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Web向け・軽量アバターランタイム - アバターに詳しくないWeb開発者でも「喋るアバター体験」を最短で実装",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "files": [
     "dist",
     "assets",
