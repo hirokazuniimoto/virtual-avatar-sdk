@@ -2,9 +2,7 @@
 
 
 <div align="center">
-  <video src="https://github.com/hirokazuniimoto/virtual-avatar-sdk/raw/main/assets/avatar_view_example.mp4" controls width="600">
-    Your browser does not support the video tag.
-  </video>
+https://github.com/user-attachments/as  sets/f9e84d89-b60c-423e-9d81-314e98aa0355
 </div>
 
 --- 
