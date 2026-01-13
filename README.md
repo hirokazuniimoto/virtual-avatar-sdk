@@ -335,7 +335,7 @@ avatar.smile() // Happy response
 await chatWithAvatar("Tell me a joke!")
 ```
 
-**Key Points:**
+**Flow:**
 - Use ChatGPT API to generate conversational responses
 - Use OpenAI TTS API (or other TTS services) to convert text to speech
 - Pass the audio to `avatar.say()` for synchronized lip-sync
@@ -706,7 +706,7 @@ avatar.smile() // 嬉しい応答
 await chatWithAvatar("ジョークを教えて！")
 ```
 
-**ポイント:**
+**実行の流れ:**
 - ChatGPT APIを使用して会話応答を生成
 - OpenAI TTS API（または他のTTSサービス）を使用してテキストを音声に変換
 - 音声を`avatar.say()`に渡してリップシンクを同期
