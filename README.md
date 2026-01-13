@@ -211,6 +211,35 @@ await avatar.idle()                 // Play idle animation (preset)
 await avatar.bow()                  // Play bow animation (preset)
 ```
 
+#### Loading Assets from npm Package
+
+When installed via npm, assets are located in `node_modules/virtual-avatar/assets/`. To resolve asset paths, use the `getAssetPath`, `getAnimationPath`, and `getAvatarPath` helper functions.
+
+**Usage:**
+
+```typescript
+import { AvatarSpeaker, getAnimationPath, getAvatarPath } from "virtual-avatar"
+
+// Resolve avatar path
+const avatar = new AvatarSpeaker({
+  avatar: getAvatarPath("AvatarSample_A.vrm")
+})
+
+await avatar.ready()
+
+// Resolve animation paths
+await avatar.animate(getAnimationPath("VRMA_01(全身を見せる).vrma"))
+await avatar.animate(getAnimationPath("VRMA_02(挨拶).vrma"))
+```
+
+**Available Helper Functions:**
+
+- `getAssetPath(assetPath: string)` - Resolve path relative to assets folder
+- `getAnimationPath(animationName: string)` - Resolve animation file path
+- `getAvatarPath(avatarName: string)` - Resolve avatar file path
+
+**Note:** For production, it's recommended to copy assets to your project's `public` folder or handle them with a bundler. When using dev servers (Vite, webpack dev server, etc.), assets can be loaded directly from `node_modules`.
+
 #### Avatar Management
 
 ```typescript
@@ -709,6 +738,35 @@ await avatar.ready()
 // 別のデフォルトアバターに切り替え
 await avatar.setAvatar("/assets/avatars/AvatarSample_B.vrm")
 ```
+
+#### npmパッケージからアセットを読み込む
+
+npmパッケージとしてインストールした場合、アセットは `node_modules/virtual-avatar/assets/` に配置されます。アセットへのパスを解決するには、`getAssetPath`、`getAnimationPath`、`getAvatarPath` ヘルパー関数を使用してください。
+
+**使用方法:**
+
+```typescript
+import { AvatarSpeaker, getAnimationPath, getAvatarPath } from "virtual-avatar"
+
+// アバターのパスを解決
+const avatar = new AvatarSpeaker({
+  avatar: getAvatarPath("AvatarSample_A.vrm")
+})
+
+await avatar.ready()
+
+// アニメーションのパスを解決
+await avatar.animate(getAnimationPath("VRMA_01(全身を見せる).vrma"))
+await avatar.animate(getAnimationPath("VRMA_02(挨拶).vrma"))
+```
+
+**利用可能なヘルパー関数:**
+
+- `getAssetPath(assetPath: string)` - アセットフォルダからの相対パスを解決
+- `getAnimationPath(animationName: string)` - アニメーションファイルのパスを解決
+- `getAvatarPath(avatarName: string)` - アバターファイルのパスを解決
+
+**注意:** 本番環境では、アセットをプロジェクトの `public` フォルダにコピーするか、バンドラーでアセットを処理することを推奨します。開発サーバー（Vite、webpack dev serverなど）を使用している場合、`node_modules` から直接アセットを読み込むことができます。
 
 #### デフォルトアニメーション
 
