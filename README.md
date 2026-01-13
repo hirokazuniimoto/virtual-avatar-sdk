@@ -1,5 +1,14 @@
 # Virtual Avatar SDK (for Virtual AI Avatar)
 
+
+<div align="center">
+  <video src="https://github.com/hirokazuniimoto/virtual-avatar-sdk/raw/main/assets/avatar_view_example.mp4" controls width="600">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+--- 
+
 [English](#english) | [日本語](#日本語)
 
 ---
