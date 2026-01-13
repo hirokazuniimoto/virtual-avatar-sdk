@@ -1,9 +1,6 @@
 # Virtual Avatar SDK (for Virtual AI Avatar)
 
-
-<div align="center">
 https://github.com/user-attachments/assets/f9e84d89-b60c-423e-9d81-314e98aa0355
-</div>
 
 --- 
 
