@@ -2,6 +2,14 @@
 
 https://github.com/user-attachments/assets/f9e84d89-b60c-423e-9d81-314e98aa0355
 
+<div align="center">
+
+**[Try Live Demo / デモページ](https://virtual-avatar-sdk-example.vercel.app/)**
+
+Interactive AI Avatar demo with ChatGPT integration | ChatGPT統合付きのAIアバターデモ
+
+</div>
+
 --- 
 
 [English](#english) | [日本語](#日本語)
